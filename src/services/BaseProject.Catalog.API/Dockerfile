@@ -23,4 +23,9 @@ RUN dotnet publish "BaseProject.Catalog.API.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BaseProject.Catalog.API.dll"]
+
+#Padrão do container ASP.NET
+#ENTRYPOINT ["dotnet", "BaseProject.Catalog.API.dll"]
+
+#Opção de entrypoint recomendado pelo HEROKU
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet BaseProject.Catalog.API.dll
