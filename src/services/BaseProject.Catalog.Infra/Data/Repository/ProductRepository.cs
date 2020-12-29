@@ -54,7 +54,7 @@ namespace BaseProject.Catalog.Infra.Data.Repository
 
         public async Task<Product> GetByName(string name)
         {
-            return await _context.Products.Where(a => a.Name.Contains(name)).FirstOrDefaultAsync();
+            return await _context.Products.Where(a => a.Name.ToUpperInvariant().Contains(name.ToUpperInvariant())).FirstOrDefaultAsync();
         }
 
         public async Task<Price> GetCurrentPriceForSeller(Guid productId, Guid sellerId)

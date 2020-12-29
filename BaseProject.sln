@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseProject.Catalog.Domain"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseProject.Catalog.Infra", "src\services\BaseProject.Catalog.Infra\BaseProject.Catalog.Infra.csproj", "{90078AAB-1A78-4823-8D62-E3E17AE6A3CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseProject.Order.API", "src\services\BaseProject.Order.API\BaseProject.Order.API.csproj", "{CEFD5FF3-5EAC-4FB9-95C5-8571790A823D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{90078AAB-1A78-4823-8D62-E3E17AE6A3CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90078AAB-1A78-4823-8D62-E3E17AE6A3CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90078AAB-1A78-4823-8D62-E3E17AE6A3CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEFD5FF3-5EAC-4FB9-95C5-8571790A823D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEFD5FF3-5EAC-4FB9-95C5-8571790A823D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEFD5FF3-5EAC-4FB9-95C5-8571790A823D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEFD5FF3-5EAC-4FB9-95C5-8571790A823D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +151,7 @@ Global
 		{47E55DD6-4C46-461D-8FCC-51FBF4A99F46} = {D43EB0EC-FC52-4DE3-99A0-C410BD27AE68}
 		{9A942363-CD64-4490-B1A8-1B5D28D8E884} = {5C16EE22-2403-4D24-8E8A-B1CED34486DC}
 		{90078AAB-1A78-4823-8D62-E3E17AE6A3CE} = {5C16EE22-2403-4D24-8E8A-B1CED34486DC}
+		{CEFD5FF3-5EAC-4FB9-95C5-8571790A823D} = {EC878E5F-AA22-4186-9A5C-883DBD0D8719}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28910612-FC2C-4059-A8B1-E7F6B9D1174C}

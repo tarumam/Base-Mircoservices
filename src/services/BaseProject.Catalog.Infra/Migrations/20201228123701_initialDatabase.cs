@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BaseProject.Catalog.Infra.Migrations
 {
-    public partial class InitialCatalog : Migration
+    public partial class initialDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,14 +11,14 @@ namespace BaseProject.Catalog.Infra.Migrations
                 name: "Product",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Barcode = table.Column<string>(type: "varchar(15)", nullable: true),
                     Name = table.Column<string>(type: "varchar(250)", nullable: false),
                     Description = table.Column<string>(type: "varchar(500)", nullable: false),
-                    Active = table.Column<bool>(nullable: false),
-                    Image = table.Column<string>(type: "varchar(250)", nullable: false)
+                    Active = table.Column<bool>(type: "boolean", nullable: false),
+                    Image = table.Column<string>(type: "varchar(250)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,13 +29,13 @@ namespace BaseProject.Catalog.Infra.Migrations
                 name: "Price",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    ProductId = table.Column<Guid>(nullable: false),
-                    SellerId = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SellerId = table.Column<Guid>(type: "uuid", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Active = table.Column<bool>(nullable: false)
+                    Active = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {

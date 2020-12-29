@@ -3,8 +3,8 @@ using System;
 using BaseProject.Catalog.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BaseProject.Catalog.Infra.Migrations
 {
@@ -15,30 +15,30 @@ namespace BaseProject.Catalog.Infra.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.10")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .UseIdentityByDefaultColumns()
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("BaseProject.Catalog.Domain.Price", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("SellerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(10,2)");
@@ -54,16 +54,16 @@ namespace BaseProject.Catalog.Infra.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Barcode")
                         .HasColumnType("varchar(15)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -78,7 +78,7 @@ namespace BaseProject.Catalog.Infra.Migrations
                         .HasColumnType("varchar(250)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -87,10 +87,15 @@ namespace BaseProject.Catalog.Infra.Migrations
 
             modelBuilder.Entity("BaseProject.Catalog.Domain.Price", b =>
                 {
-                    b.HasOne("BaseProject.Catalog.Domain.Product", "Product")
+                    b.HasOne("BaseProject.Catalog.Domain.Product", null)
                         .WithMany("Prices")
                         .HasForeignKey("ProductId")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BaseProject.Catalog.Domain.Product", b =>
+                {
+                    b.Navigation("Prices");
                 });
 #pragma warning restore 612, 618
         }
