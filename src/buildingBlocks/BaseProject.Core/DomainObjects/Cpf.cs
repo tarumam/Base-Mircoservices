@@ -12,7 +12,7 @@ namespace BaseProject.Core.DomainObjects
 
         public Cpf(string numero)
         {
-            if (!IsValid(numero)) throw new DomainException("CPF inválido");
+            if (!string.IsNullOrEmpty(numero) && !IsValid(numero)) throw new DomainException("CPF inválido");
             Numero = numero;
         }
 

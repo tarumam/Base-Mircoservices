@@ -1,16 +1,75 @@
-version: "3"
+version: "3.7"
 
 services:
-  
+  database:
+    image: postgres
+    container_name: postgres-docker
+    environment:
+      - POSTGRES_DB=ichoose
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=docker
+    ports:
+      - "5432:5432"
+
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbit-ichoose
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbitmq-ichoose
+      - RABBITMQ_DEFAULT_PASS=rabbitmq-ichoose
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+
+  identity-api:
+    depends_on:
+      - "database"
+    image: baseproject/ichoose-identity-api:latest
+    container_name: ichoose-identity-api
+    build:
+      context: ../src
+      dockerfile: ./services/BaseProject.Identity.API/Dockerfile
+    ports:
+      - "4100:4100"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://*:4100
+      - PORT=4100
+
+
+  client-api:
+    depends_on:
+        - "database"
+        - "rabbitmq"
+        - "identity-api"
+    image: baseproject/ichoose-client-api:latest
+    container_name: ichoose-client-api
+    build:
+      context: ../src
+      dockerfile: ./services/BaseProject.Client.API/Dockerfile
+    ports:
+      - "4101:4101"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://*:4101
+      - PORT=4101
+
+
   catalog-api:
+    depends_on:
+        - "database"
     image: baseproject/ichoose-catalog-api:latest
     container_name: ichoose-catalog-api
     build:
       context: ../src
       dockerfile: ./services/BaseProject.Catalog.API/Dockerfile
     ports:
-      - "4100:4100"
+      - "4102:4102"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://*:4100
-      - PORT=4100
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://*:4102
+      - PORT=4102
+
+      

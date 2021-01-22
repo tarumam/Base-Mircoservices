@@ -17,8 +17,10 @@ namespace BaseProject.Catalog.API.Configuration
             services.AddScoped<IMediatorHandler, MediatorHandler>();
             services.AddScoped<IRequestHandler<AddProductCommand, ValidationResult>, ProductCommandHandler>();
             services.AddScoped<IRequestHandler<AddPriceCommand, ValidationResult>, ProductCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdateProductCommand, ValidationResult>, ProductCommandHandler>();
 
             services.AddScoped<INotificationHandler<ProductAddedEvent>, ProductEventHandler>();
+            services.AddScoped<INotificationHandler<ProductUpdatedEvent>, ProductEventHandler>();
 
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<CatalogContext>();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BaseProject.Catalog.API.Application.Commands;
 using BaseProject.Catalog.API.Models;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BaseProject.Catalog.API.Controllers
 {
-    [Route("[controller]")]
     public class CatalogController : MainController
     {
         private readonly IProductRepository _prodRepository;
@@ -23,9 +23,29 @@ namespace BaseProject.Catalog.API.Controllers
         }
 
         [HttpGet("products")]
-        public async Task<IEnumerable<Product>> GetProducts(int pageSize = 10, int pageIndex = 1)
+        public async Task<IEnumerable<CatalogDTO>> GetProducts(int pageSize = 10, int pageIndex = 1)
         {
-            return await _prodRepository.GetAll(pageSize, pageIndex);
+            var products = await _prodRepository.GetAll(pageSize, pageIndex);
+            var catalog = products.Select(p => new CatalogDTO
+            {
+                Id = p.Id,
+                MainImage = p.Image,
+                Name = p.Name,
+                PriceRange = GetPriceRange(p.Prices),
+                Barcode = p.Barcode
+            });
+            return catalog;
+        }
+
+        private string GetPriceRange(List<Price> prices)
+        {
+            if (!prices.Any()) return "Preço não encontrado.";
+
+            var max = prices.Select(a => a.Value).Max();
+            var min = prices.Select(a => a.Value).Min();
+
+            if (max == min) return $"R$ {max}";
+            return $"De R$ {min} até {max}.";
         }
 
         [HttpGet("products/{id}")]

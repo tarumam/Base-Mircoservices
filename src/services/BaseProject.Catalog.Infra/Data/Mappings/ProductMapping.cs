@@ -16,19 +16,19 @@ namespace BaseProject.Catalog.Infra.Data.Mappings
                 .HasColumnType("varchar(250)");
 
             builder.Property(c => c.Description)
-                .IsRequired()
-                .HasColumnType("varchar(500)");
+                .IsRequired(false)
+                .HasColumnType("varchar(2000)");
 
             builder.Property(c => c.Image)
-                .IsRequired()
-                .HasColumnType("varchar(250)");
+                .IsRequired(false)
+                .HasColumnType("varchar(1000)");
 
             builder.Property(c => c.Barcode)
-                .HasColumnType("varchar(15)");
+                .HasColumnType("varchar(30)");
 
-            //builder.HasMany(p => p.Prices)
-            //    .WithOne(p => p.Product)
-            //    .HasForeignKey(p => p.ProductId);
+            builder.HasMany(p => p.Prices)
+                .WithOne(p => p.Product)
+                .HasForeignKey(p => p.ProductId);
         }
     }
 }

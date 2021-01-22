@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using Microsoft.EntityFrameworkCore;
 
 namespace BaseProject.Catalog.Infra.Data
@@ -10,20 +11,40 @@ namespace BaseProject.Catalog.Infra.Data
         {
             try
             {
+                Console.WriteLine("Trying to connect to database");
+                int retries = 5;
                 using var ctx = context;
-                
-                ctx.Database.Migrate();
 
-                if (ctx.Products.Any()) return;
+                while (retries > 0)
+                {
+                    try
+                    {
+                        Console.WriteLine($"Trying to connect - retries left: {retries}");
+                        
+                        ctx.Database.Migrate();
+                        
+                        if (ctx.Products.Any()) return;
+
+                        ctx.SaveChanges();
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        retries--;
+                        Thread.Sleep(5000);
+                    }
+                }
+
 
                 //var initialScripts = Query.InitialScripts;
 
                 //ctx.Database.ExecuteSqlRaw(initialScripts);
 
-                ctx.SaveChanges();
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Was not possible to create database.");
+
                 throw;
             }
         }

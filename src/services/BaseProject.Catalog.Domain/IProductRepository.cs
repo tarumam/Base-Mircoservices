@@ -17,5 +17,6 @@ namespace BaseProject.Catalog.Domain
         Task<List<Price>> GetPrices(Guid productId);
         Task<Product> GetProductWithPrices(Guid productId);
         Task AddPriceToProduct(Price price);
+        Task<List<Product>> GetProductsWithPendingBaseInfo();
     }
 }

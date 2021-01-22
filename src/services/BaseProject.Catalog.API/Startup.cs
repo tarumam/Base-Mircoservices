@@ -33,6 +33,8 @@ namespace BaseProject.Catalog.API
         {
             services.AddApiConfiguration(Configuration);
 
+            services.AddBackgroundServiceConfiguration();
+
             services.AddJwtConfiguration(Configuration);
 
             services.AddSwaggerConfiguration();

@@ -48,7 +48,23 @@ namespace BaseProject.Catalog.Infra
                 }
             }
 
-            return await base.SaveChangesAsync() > 0;
+            var status = await base.SaveChangesAsync() > 0;
+            return status;
+        }
+
+        public bool IsDBHelthy()
+        {
+            try
+            {
+                var canConnect = this.Database.CanConnect();
+                Console.WriteLine($"Can connect to database: {canConnect}");
+                return canConnect;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unable to connect to Database. {ex.Message}");
+                throw;
+            }
         }
     }
 }

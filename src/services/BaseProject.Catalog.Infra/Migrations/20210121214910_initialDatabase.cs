@@ -12,11 +12,11 @@ namespace BaseProject.Catalog.Infra.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Barcode = table.Column<string>(type: "varchar(15)", nullable: true),
+                    Barcode = table.Column<string>(type: "varchar(30)", nullable: true),
                     Name = table.Column<string>(type: "varchar(250)", nullable: false),
-                    Description = table.Column<string>(type: "varchar(500)", nullable: false),
+                    Description = table.Column<string>(type: "varchar(2000)", nullable: true),
                     Active = table.Column<bool>(type: "boolean", nullable: false),
-                    Image = table.Column<string>(type: "varchar(250)", nullable: false),
+                    Image = table.Column<string>(type: "varchar(1000)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },

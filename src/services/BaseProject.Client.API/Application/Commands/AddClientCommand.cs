@@ -39,7 +39,7 @@ namespace BaseProject.Clients.API.Application.Commands
                     .WithMessage("O nome do cliente não foi informado");
 
                 RuleFor(c => c.Cpf)
-                    .Must(TerCpfValido)
+                    .Must(TerCpfValido).When(c => !string.IsNullOrEmpty(c.Cpf))
                     .WithMessage("O CPF informado não é válido.");
 
                 RuleFor(c => c.Email)

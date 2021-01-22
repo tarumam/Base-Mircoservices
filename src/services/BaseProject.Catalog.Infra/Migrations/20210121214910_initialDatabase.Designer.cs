@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BaseProject.Catalog.Infra.Migrations
 {
     [DbContext(typeof(CatalogContext))]
-    [Migration("20201228123701_initialDatabase")]
+    [Migration("20210121214910_initialDatabase")]
     partial class initialDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace BaseProject.Catalog.Infra.Migrations
             modelBuilder
                 .UseIdentityByDefaultColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.1");
+                .HasAnnotation("ProductVersion", "5.0.2");
 
             modelBuilder.Entity("BaseProject.Catalog.Domain.Price", b =>
                 {
@@ -62,18 +62,16 @@ namespace BaseProject.Catalog.Infra.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Barcode")
-                        .HasColumnType("varchar(15)");
+                        .HasColumnType("varchar(30)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("varchar(2000)");
 
                     b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -89,10 +87,12 @@ namespace BaseProject.Catalog.Infra.Migrations
 
             modelBuilder.Entity("BaseProject.Catalog.Domain.Price", b =>
                 {
-                    b.HasOne("BaseProject.Catalog.Domain.Product", null)
+                    b.HasOne("BaseProject.Catalog.Domain.Product", "Product")
                         .WithMany("Prices")
                         .HasForeignKey("ProductId")
                         .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("BaseProject.Catalog.Domain.Product", b =>

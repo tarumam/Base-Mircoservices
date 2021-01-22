@@ -24,9 +24,9 @@ namespace BaseProject.Catalog.Infra.Data.Mappings
             builder.Property(c => c.Active)
                 .IsRequired();
 
-            //builder.HasOne (p => p.Product)
-            //    .WithMany(p => p.Prices)
-            //    .HasForeignKey(p => p.ProductId);
+            builder.HasOne(p => p.Product)
+                .WithMany(p => p.Prices)
+                .HasForeignKey(p => p.ProductId);
         }
     }
 }

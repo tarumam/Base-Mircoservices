@@ -1,5 +1,6 @@
 ﻿using BaseProject.WebAPI.Core.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 namespace BaseProject.Catalog.API.Controllers
 {
@@ -7,13 +8,20 @@ namespace BaseProject.Catalog.API.Controllers
     [Route("[controller]")]
     public class StatusController : ControllerBase
     {
+        IHostEnvironment _env;
+        public StatusController(IHostEnvironment env)
+        {
+            _env = env;
+        }
+
         [HttpGet]
         public object Get()
         {
             return new
             {
                 status = "ICHOOSE-CATALOG ONLINE",
-                HEROKU = HerokuConnection.GetHerokuConnection()
+                HEROKU = HerokuConnection.GetHerokuConnection(),
+                Environment = _env.EnvironmentName
             };
         }
     }

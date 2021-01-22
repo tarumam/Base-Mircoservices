@@ -22,7 +22,6 @@ namespace BaseProject.WebApp.MVC.Configuration
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAspNetUser, AspNetUser>();
 
-
             services.AddTransient<HttpClientAuthDelegatinHandler>();
 
             services.AddHttpClient<IAuthService, AuthService>()

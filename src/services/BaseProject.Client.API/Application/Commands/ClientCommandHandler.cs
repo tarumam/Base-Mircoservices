@@ -24,7 +24,7 @@ namespace BaseProject.Clients.API.Application.Commands
 
             var cliente = new Client(message.Id, message.Name, message.Email, message.Cpf);
 
-            var clienteExistente = await _clienteRepository.GetByCPF(cliente.Cpf.Numero);
+            var clienteExistente = string.IsNullOrEmpty(cliente.Cpf.Numero) ? null : await _clienteRepository.GetByCPF(cliente.Cpf.Numero);
 
             if (clienteExistente != null)
             {

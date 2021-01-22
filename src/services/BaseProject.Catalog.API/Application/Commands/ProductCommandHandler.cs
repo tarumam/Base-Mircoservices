@@ -11,7 +11,8 @@ namespace BaseProject.Catalog.API.Application.Commands
 {
     public class ProductCommandHandler : CommandHandler,
         IRequestHandler<AddProductCommand, ValidationResult>,
-        IRequestHandler<AddPriceCommand, ValidationResult>
+        IRequestHandler<AddPriceCommand, ValidationResult>,
+        IRequestHandler<UpdateProductCommand, ValidationResult>
     {
         private readonly IProductRepository _productRep;
 
@@ -69,6 +70,36 @@ namespace BaseProject.Catalog.API.Application.Commands
             var price = new Price(request.ProductId, request.SellerId, request.Value, request.Active);
 
             await _productRep.AddPriceToProduct(price);
+
+            return await PersistirDados(_productRep.UnitOfWork);
+        }
+
+        public async Task<ValidationResult> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        {
+            if (!request.IsValid()) return request.ValidationResult;
+
+
+            if (request.Id == Guid.Empty || string.IsNullOrEmpty(request.Barcode))
+            {
+                AdicionarErro("As informações do produto são inválidas.");
+                return ValidationResult;
+            }
+
+            var existentProduct = await _productRep.GetById(request.Id);
+            if (existentProduct.Barcode != request.Barcode)
+            {
+                AdicionarErro("O produto informado é inválido, verifique o código de barras.");
+            }
+
+            existentProduct.SetName(request.Name);
+            existentProduct.setImage(request.Image);
+            existentProduct.SetDescription(request.Description);
+            existentProduct.setActive(request.Active);
+            existentProduct.SetSyncWithWeb(request.SyncWithWeb);
+
+            _productRep.Update(existentProduct);
+
+            existentProduct.AddEvent(new ProductAddedEvent(existentProduct.Id, existentProduct.Barcode, existentProduct.Name, existentProduct.Description, existentProduct.Active, existentProduct.CreatedAt, existentProduct.Image));
 
             return await PersistirDados(_productRep.UnitOfWork);
         }

@@ -47,6 +47,11 @@ namespace BaseProject.Clients.API.Data
 
             return sucesso;
         }
+
+        public bool IsDBHelthy()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public static class MediatorExtension

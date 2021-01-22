@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using BaseProject.Catalog.Infra;
+using BaseProject.Catalog.Infra.Data;
+using BaseProject.WebAPI.Core.Extensions;
 using BaseProject.WebAPI.Core.Identity;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using BaseProject.Catalog.Infra;
-using Microsoft.EntityFrameworkCore;
-using System;
-using BaseProject.WebAPI.Core.Extensions;
+using Newtonsoft.Json;
 
 namespace BaseProject.Catalog.API.Configuration
 {
@@ -25,7 +27,12 @@ namespace BaseProject.Catalog.API.Configuration
             services.AddDbContext<CatalogContext>(options =>
                 options.UseNpgsql(GetConnectionString(configuration)));
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(o =>
+                {
+                    o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    o.SerializerSettings.Formatting = Formatting.Indented;
+                });
 
             services.AddCors(options =>
             {
@@ -40,9 +47,16 @@ namespace BaseProject.Catalog.API.Configuration
 
         public static void UseApiConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 app.UseDeveloperExceptionPage();
+            //}
+
+            using (var contextScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                Console.WriteLine("****************Criação do contexto CATALOG****************");
+                var context = contextScope.ServiceProvider.GetRequiredService<CatalogContext>();
+                DBInitializer.Initialize(context);
             }
 
             app.UseHttpsRedirection();

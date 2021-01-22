@@ -1,22 +1,24 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["src/services/BaseProject.Client.API/BaseProject.Client.API.csproj", "src/services/BaseProject.Client.API/"]
-RUN dotnet restore "src/services/BaseProject.Client.API/BaseProject.Client.API.csproj"
+
+COPY ["./buildingBlocks/BaseProject.WebAPI.Core/BaseProject.WebAPI.Core.csproj", "buildingBlocks/BaseProject.WebAPI.Core/"]
+COPY ["./buildingBlocks/BaseProject.Core/BaseProject.Core.csproj", "buildingBlocks/BaseProject.Core/"]
+COPY ["./buildingBlocks/BaseProject.MessageBus/BaseProject.MessageBus.csproj", "buildingBlocks/BaseProject.MessageBus/"]
+COPY ["./services/BaseProject.Client.API/BaseProject.Clients.API.csproj", "services/BaseProject.Client.API/"]
+
+RUN dotnet restore "services/BaseProject.Client.API/BaseProject.Clients.API.csproj"
 COPY . .
-WORKDIR "/src/src/services/BaseProject.Client.API"
-RUN dotnet build "BaseProject.Client.API.csproj" -c Release -o /app/build
+WORKDIR "services/BaseProject.Client.API"
+RUN dotnet build "BaseProject.Clients.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "BaseProject.Client.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "BaseProject.Clients.API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BaseProject.Client.API.dll"]
+
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet BaseProject.Clients.API.dll

@@ -6,11 +6,11 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using BaseProject.Core.Messages.Integration;
-using BaseProject.Identity.API.Extensions;
 using BaseProject.Identity.API.Models;
 using BaseProject.MessageBus;
 using BaseProject.WebAPI.Core.Controllers;
 using BaseProject.WebAPI.Core.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -19,7 +19,6 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace BaseProject.Identity.API.Controllers
 {
-    [Route("api/auth")]
     public class AuthController : MainController
     {
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -38,7 +37,7 @@ namespace BaseProject.Identity.API.Controllers
         }
 
         [HttpPost("sign-up")]
-        public async Task<ActionResult> Register(RegisterUser registerUser)
+        public async Task<ActionResult> SignUp(RegisterClient registerUser)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
@@ -90,7 +89,7 @@ namespace BaseProject.Identity.API.Controllers
             return CustomResponse();
         }
 
-        private async Task<ResponseMessage> RegisterClient(RegisterUser user)
+        private async Task<ResponseMessage> RegisterClient(RegisterClient user)
         {
             var u = await _userManager.FindByEmailAsync(user.Email);
 

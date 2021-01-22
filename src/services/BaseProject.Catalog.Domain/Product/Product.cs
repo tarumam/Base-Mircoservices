@@ -1,7 +1,6 @@
 ﻿
 using System.Collections.Generic;
 using BaseProject.Core.DomainObjects;
-using System.Linq;
 
 namespace BaseProject.Catalog.Domain
 {
@@ -28,7 +27,36 @@ namespace BaseProject.Catalog.Domain
         public string Description { get; private set; }
         public bool Active { get; private set; }
         public string Image { get; private set; }
-        public List<Price> Prices { get; private set; } = new List<Price>();
+        public bool SyncWithWeb { get; private set; } = false;
+        public virtual List<Price> Prices { get; private set; } = new List<Price>();
 
+        public void SetName(string name)
+        {
+            if (!string.IsNullOrEmpty(name) && name != this.Name)
+                Name = name;
+        }
+
+        public void SetDescription(string description)
+        {
+            if (!string.IsNullOrEmpty(description) && description != this.Description)
+                Description = description;
+        }
+
+        public void setActive(bool active)
+        {
+            if (active != this.Active)
+                Active = active;
+        }
+
+        public void setImage(string image)
+        {
+            if (!string.IsNullOrEmpty(image) && image != this.Image)
+                Image = image;
+        }
+
+        public void SetSyncWithWeb(bool sync)
+        {
+            SyncWithWeb = sync;
+        }
     }
 }

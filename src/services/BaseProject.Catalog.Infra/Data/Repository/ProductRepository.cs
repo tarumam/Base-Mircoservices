@@ -26,7 +26,10 @@ namespace BaseProject.Catalog.Infra.Data.Repository
 
         public async Task AddPriceToProduct(Price price)
         {
-            var lastPrice = await _context.Prices.Where(s => s.ProductId == price.ProductId && s.CreatedAt == _context.Prices.Max(x => x.CreatedAt)).FirstOrDefaultAsync();
+            var lastPrice = await _context.Prices.Where(s => s.ProductId == price.ProductId
+                    && s.CreatedAt == _context.Prices.Max(x => x.CreatedAt)
+                    && s.SellerId == price.SellerId)
+                .FirstOrDefaultAsync();
             lastPrice?.SetActive(false);
             await _context.Prices.AddAsync(price);
         }
@@ -38,7 +41,11 @@ namespace BaseProject.Catalog.Infra.Data.Repository
 
         public async Task<IEnumerable<Product>> GetAll(int pageSize, int pageIndex, string query = null)
         {
-            var result = await _context.Products.Include(p => p.Prices.Where(pr => pr.Active == true)).Take(pageSize).Skip(pageIndex - 1).ToListAsync();
+            var result = await _context.Products.Include(p =>
+                p.Prices.Where(pr => pr.Active == true))
+                .Take(pageSize)
+                .Skip(pageIndex - 1)
+                .ToListAsync();
             return result;
         }
 
@@ -86,6 +93,15 @@ namespace BaseProject.Catalog.Infra.Data.Repository
         public void Update(Product product)
         {
             _context.Products.Update(product);
+        }
+
+        public async Task<List<Product>> GetProductsWithPendingBaseInfo()
+        {
+            var barcodes = await _context.Products
+                  .Where(a => a.SyncWithWeb == false)
+                  .ToListAsync();
+
+            return barcodes;
         }
     }
 }

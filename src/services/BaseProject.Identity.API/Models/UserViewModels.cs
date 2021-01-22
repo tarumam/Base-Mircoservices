@@ -3,12 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BaseProject.Identity.API.Models
 {
-    public class RegisterUser
+    public class RegisterClient
     {
         [Required(ErrorMessage ="O campo {0} é obrigatório")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public string Cpf { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]

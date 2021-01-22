@@ -3,8 +3,8 @@ using System;
 using BaseProject.Clients.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BaseProject.Clients.API.Migrations
 {
@@ -15,25 +15,28 @@ namespace BaseProject.Clients.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .UseIdentityByDefaultColumns()
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("BaseProject.Clients.API.Models.Address", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("varchar(100)");
 
                     b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Complement")
                         .HasColumnType("varchar(250)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Neighbohood")
                         .IsRequired()
@@ -51,6 +54,9 @@ namespace BaseProject.Clients.API.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(200)");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("ZipCode")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
@@ -67,14 +73,20 @@ namespace BaseProject.Clients.API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("Excluido")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -87,6 +99,8 @@ namespace BaseProject.Clients.API.Migrations
                         .WithOne("Address")
                         .HasForeignKey("BaseProject.Clients.API.Models.Address", "ClientId")
                         .IsRequired();
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("BaseProject.Clients.API.Models.Client", b =>
@@ -94,13 +108,13 @@ namespace BaseProject.Clients.API.Migrations
                     b.OwnsOne("BaseProject.Core.DomainObjects.Cpf", "Cpf", b1 =>
                         {
                             b1.Property<Guid>("ClientId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Numero")
                                 .IsRequired()
-                                .HasColumnName("Cpf")
+                                .HasMaxLength(11)
                                 .HasColumnType("varchar(11)")
-                                .HasMaxLength(11);
+                                .HasColumnName("Cpf");
 
                             b1.HasKey("ClientId");
 
@@ -113,12 +127,12 @@ namespace BaseProject.Clients.API.Migrations
                     b.OwnsOne("BaseProject.Core.DomainObjects.Email", "Email", b1 =>
                         {
                             b1.Property<Guid>("ClientId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Endereco")
                                 .IsRequired()
-                                .HasColumnName("Email")
-                                .HasColumnType("varchar(254)");
+                                .HasColumnType("varchar(254)")
+                                .HasColumnName("Email");
 
                             b1.HasKey("ClientId");
 
@@ -127,6 +141,15 @@ namespace BaseProject.Clients.API.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ClientId");
                         });
+
+                    b.Navigation("Cpf");
+
+                    b.Navigation("Email");
+                });
+
+            modelBuilder.Entity("BaseProject.Clients.API.Models.Client", b =>
+                {
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

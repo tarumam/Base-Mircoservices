@@ -18,8 +18,7 @@ namespace BaseProject.Catalog.Domain
         public Guid SellerId { get; private set; }
         public decimal Value { get; private set; }
         public bool Active { get; private set; }
-
-        //public Product Product { get; private set; }
+        public virtual Product Product { get; private set; }
         public void SetActive(bool active)
         {
             Active = active;

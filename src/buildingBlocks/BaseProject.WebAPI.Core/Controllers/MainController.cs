@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BaseProject.WebAPI.Core.Controllers
 {
+    [Route("[controller]")]
     [ApiController]
     public abstract class MainController : Controller
     {
