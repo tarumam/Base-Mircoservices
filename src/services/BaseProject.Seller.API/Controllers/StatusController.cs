@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using BaseProject.Catalog.Domain;
-using BaseProject.WebAPI.Core.Extensions;
+﻿using BaseProject.WebAPI.Core.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 
-namespace BaseProject.Catalog.API.Controllers
+namespace BaseProject.Seller.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -21,7 +19,7 @@ namespace BaseProject.Catalog.API.Controllers
         {
             return new
             {
-                status = "ICHOOSE-CATALOG ONLINE",
+                status = "ICHOOSE-SELLER ONLINE",
                 HEROKU = HerokuConnection.GetHerokuConnection(),
                 Environment = _env.EnvironmentName
             };

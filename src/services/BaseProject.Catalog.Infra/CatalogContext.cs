@@ -15,6 +15,8 @@ namespace BaseProject.Catalog.Infra
         public DbSet<Product> Products { get; set; }
         public DbSet<Price> Prices { get; set; }
 
+        public DbSet<BluesoftToken> BluesoftTokens { get;set;}
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Ignore<ValidationResult>();

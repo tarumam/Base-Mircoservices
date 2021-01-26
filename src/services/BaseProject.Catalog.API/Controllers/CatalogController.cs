@@ -37,6 +37,13 @@ namespace BaseProject.Catalog.API.Controllers
             return catalog;
         }
 
+        [HttpGet("products-by-name")]
+        public async Task<IEnumerable<Product>> GetProductsByName(string text, int pageSize = 10, int pageIndex = 1)
+        {
+            var products = await _prodRepository.GetByName(pageSize, pageIndex, text);
+            return products;
+        }
+
         private string GetPriceRange(List<Price> prices)
         {
             if (!prices.Any()) return "Preço não encontrado.";
@@ -80,6 +87,12 @@ namespace BaseProject.Catalog.API.Controllers
                 new AddPriceCommand(price.ProductId, price.SellerId, price.Value));
 
             return CustomResponse(resultado);
+        }
+
+        [HttpGet, Route("get-tokens")]
+        public async Task<List<BluesoftToken>> GetTokens()
+        {
+            return await _prodRepository.GetBluesoftValidToken();
         }
     }
 }

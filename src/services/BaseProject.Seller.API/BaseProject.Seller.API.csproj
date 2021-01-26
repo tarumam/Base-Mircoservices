@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>933e5758-a1d7-48c3-8800-81281280c1d5</UserSecretsId>
+    <UserSecretsId>28fa69ff-25ed-4abc-9358-a95ce24fe13e</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
   </PropertyGroup>
@@ -24,9 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\buildingBlocks\BaseProject.Core\BaseProject.Core.csproj" />
-    <ProjectReference Include="..\..\buildingBlocks\BaseProject.MessageBus\BaseProject.MessageBus.csproj" />
     <ProjectReference Include="..\..\buildingBlocks\BaseProject.WebAPI.Core\BaseProject.WebAPI.Core.csproj" />
   </ItemGroup>
-
 
 </Project>

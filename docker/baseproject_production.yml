@@ -72,4 +72,18 @@ services:
       - ASPNETCORE_URLS=http://*:4102
       - PORT=4102
 
+  seller-api:
+    depends_on:
+        - "database"
+    image: baseproject/ichoose-seller-api:latest
+    container_name: ichoose-seller-api
+    build:
+      context: ../src
+      dockerfile: ./services/BaseProject.Seller.API/Dockerfile
+    ports:
+      - "4103:4103"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://*:4103
+      - PORT=4103
       

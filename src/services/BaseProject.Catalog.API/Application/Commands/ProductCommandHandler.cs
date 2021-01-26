@@ -78,7 +78,6 @@ namespace BaseProject.Catalog.API.Application.Commands
         {
             if (!request.IsValid()) return request.ValidationResult;
 
-
             if (request.Id == Guid.Empty || string.IsNullOrEmpty(request.Barcode))
             {
                 AdicionarErro("As informações do produto são inválidas.");

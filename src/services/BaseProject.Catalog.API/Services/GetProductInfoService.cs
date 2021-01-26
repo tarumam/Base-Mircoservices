@@ -43,10 +43,12 @@ namespace BaseProject.Catalog.API.Services
             _logger.LogInformation("GetProductInfo - Iniciando Busca");
 
             List<Product> products;
+            List<BluesoftToken> tokens;
+            IProductRepository productRep;
 
             using (var scope = _serviceProvider.CreateScope())
             {
-                var productRep = scope.ServiceProvider.GetRequiredService<IProductRepository>();
+                productRep = scope.ServiceProvider.GetRequiredService<IProductRepository>();
 
                 if (!productRep.UnitOfWork.IsDBHelthy())
                 {
@@ -54,64 +56,76 @@ namespace BaseProject.Catalog.API.Services
                 }
 
                 products = await productRep.GetProductsWithPendingBaseInfo();
+
+                if (products != null && !products.Any())
+                {
+                    _logger.LogInformation($"GetProductInfo - Nenhum produto encontrado");
+                    return;
+                }
+
+                tokens = await productRep.GetBluesoftValidToken();
+
+
+                if (tokens == null || !tokens.Any())
+                    return;
+
+                _logger.LogInformation($"GetProductInfo - Quantidade de produtos pendentes: {products.Count}");
+
+                var product = products.FirstOrDefault();
+                if (string.IsNullOrEmpty(product.Barcode))
+                {
+                    _logger.LogInformation($"GetProductInfo - Código de barras vazio - id: {product.Id}");
+                    return;
+                }
+
+                _logger.LogInformation($"GetProductInfo - Buscando informações do código: {product.Barcode}");
+
+
+                if (_httpClient == null)
+                    _httpClient = new HttpClient();
+
+                var token = tokens.FirstOrDefault();
+                token.Executions--;
+                productRep.SetExecuteValueToken(token);
+
+                if (!_httpClient.DefaultRequestHeaders.Contains("X-Cosmos-Token"))
+                {
+                    _httpClient.DefaultRequestHeaders.Add("X-Cosmos-Token", token.Token);
+                }
+                var response = await _httpClient.GetAsync($"https://api.cosmos.bluesoft.com.br/gtins/{product.Barcode}");
+
+                _logger.LogInformation($"GetProductInfo - Sucesso na request: {response.IsSuccessStatusCode}");
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                BlueSoftDTO result;
+
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    result = JsonSerializer.Deserialize<BlueSoftDTO>(data, options);
+                }
+                else
+                {
+                    _logger.LogInformation($"GetProductInfo - fatlha na request do bluesoft");
+
+                    result = new BlueSoftDTO();
+                    result.Description = "Produto não encontrado.";
+                    result.Thumbnail = null;
+                    result.Gross_weight = null;
+                }
+
+                using (var mscope = _serviceProvider.CreateScope())
+                {
+                    var mediator = mscope.ServiceProvider.GetRequiredService<IMediatorHandler>();
+                    var success = await mediator.SendCommand(new UpdateProductCommand(product.Id, product.Barcode, result.Description, $"peso: {result.Gross_weight}", true, result.Thumbnail, true));
+                }
+             
             }
 
-            if (products != null && !products.Any())
-            {
-                _logger.LogInformation($"GetProductInfo - Nenhum produto encontrado");
-                return;
-            }
-
-            _logger.LogInformation($"GetProductInfo - Quantidade de produtos pendentes: {products.Count}");
-
-            var product = products.FirstOrDefault();
-            if (string.IsNullOrEmpty(product.Barcode))
-            {
-                _logger.LogInformation($"GetProductInfo - Código de barras vazio - id: {product.Id}");
-                return;
-            }
-
-            _logger.LogInformation($"GetProductInfo - Buscando informações do código: {product.Barcode}");
-
-
-            if (_httpClient == null)
-                _httpClient = new HttpClient();
-
-            if (!_httpClient.DefaultRequestHeaders.Contains("X-Cosmos-Token"))
-            {
-                _httpClient.DefaultRequestHeaders.Add("X-Cosmos-Token", "teMPAh28jA0d3aO149-c-w");
-            }
-            var response = await _httpClient.GetAsync($"https://api.cosmos.bluesoft.com.br/gtins/{product.Barcode}");
-
-            _logger.LogInformation($"GetProductInfo - Sucesso na request: {response.IsSuccessStatusCode}");
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            BlueSoftDTO result;
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var data = await response.Content.ReadAsStringAsync();
-                result = JsonSerializer.Deserialize<BlueSoftDTO>(data, options);
-            }
-            else
-            {
-                _logger.LogInformation($"GetProductInfo - fatlha na request do bluesoft");
-
-                result = new BlueSoftDTO();
-                result.Description = "Produto não encontrado.";
-                result.Thumbnail = null;
-                result.Gross_weight = null;
-            }
-
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var mediator = scope.ServiceProvider.GetRequiredService<IMediatorHandler>();
-                var success = await mediator.SendCommand(new UpdateProductCommand(product.Id, product.Barcode, result.Description, $"peso: {result.Gross_weight}", true, result.Thumbnail, true));
-            }
 
             _logger.LogInformation($"GetProductInfo - Fim de um ciclo");
         }

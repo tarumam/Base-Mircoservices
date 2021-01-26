@@ -103,5 +103,28 @@ namespace BaseProject.Catalog.Infra.Data.Repository
 
             return barcodes;
         }
+
+        public async Task<List<BluesoftToken>> GetBluesoftValidToken()
+        {
+            return await _context.BluesoftTokens
+                .Where(a => a.Executions <= 25 && a.Executions > 0)
+                .ToListAsync();
+        }
+
+        public async void SetExecuteValueToken(BluesoftToken token)
+        {
+            _context.BluesoftTokens.Update(token);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetByName(int pageSize, int pageIndex, string text)
+        {
+            return await _context.Products
+                .Where(a => a.Name.ToUpper()
+                .Contains(text.ToUpper()))
+                .Take(pageSize)
+                .Skip(pageIndex - 1)
+                .ToListAsync();
+        }
     }
 }

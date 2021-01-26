@@ -1,5 +1,6 @@
 ﻿using System;
 using BaseProject.Identity.API.Data;
+using BaseProject.WebAPI.Core.Data;
 using BaseProject.WebAPI.Core.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,11 +25,12 @@ namespace BaseProject.Identity.API.Configuration
                 app.UseDeveloperExceptionPage();
             }
 
+
             using (var contextScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 Console.WriteLine("****************Criação do contexto CATALOG****************");
                 var context = contextScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                DBInitializer.Initialize(context);
+                new DBInitializer<ApplicationDbContext>().Initialize(context);
             }
 
             app.UseHttpsRedirection();

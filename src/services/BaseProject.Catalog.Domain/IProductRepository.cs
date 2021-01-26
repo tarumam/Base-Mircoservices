@@ -11,6 +11,7 @@ namespace BaseProject.Catalog.Domain
         Task<Product> GetById(Guid id);
         Task<Product> GetByBarcode(string barcode);
         Task<Product> GetByName(string name);
+        Task<IEnumerable<Product>> GetByName(int pageSize, int pageIndex, string text);
         void Add(Product produto);
         void Update(Product produto);
         Task<Price> GetCurrentPriceForSeller(Guid productId, Guid sellerId);
@@ -18,5 +19,9 @@ namespace BaseProject.Catalog.Domain
         Task<Product> GetProductWithPrices(Guid productId);
         Task AddPriceToProduct(Price price);
         Task<List<Product>> GetProductsWithPendingBaseInfo();
+
+
+        Task<List<BluesoftToken>> GetBluesoftValidToken();
+        void SetExecuteValueToken(BluesoftToken token);
     }
 }
