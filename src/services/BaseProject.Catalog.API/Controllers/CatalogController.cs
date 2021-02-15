@@ -38,11 +38,27 @@ namespace BaseProject.Catalog.API.Controllers
         }
 
         [HttpGet("products-by-name")]
-        public async Task<IEnumerable<Product>> GetProductsByName(string text, int pageSize = 10, int pageIndex = 1)
+        public async Task<IEnumerable<CatalogDTO>> GetProductsByName(string text, int pageSize = 10, int pageIndex = 1)
         {
             var products = await _prodRepository.GetByName(pageSize, pageIndex, text);
-            return products;
+            var catalog = products.Select(p => new CatalogDTO
+            {
+                Id = p.Id,
+                MainImage = p.Image,
+                Name = p.Name,
+                PriceRange = GetPriceRange(p.Prices),
+                Barcode = p.Barcode
+            });
+            return catalog;
         }
+
+        [HttpGet("product-by-barcode")]
+        public async Task<Product> GetProductByBarcode(string barcode)
+        {
+            var product = await _prodRepository.GetByBarcode(barcode);
+            return product;
+        }
+
 
         private string GetPriceRange(List<Price> prices)
         {
@@ -83,8 +99,10 @@ namespace BaseProject.Catalog.API.Controllers
         [HttpPost, Route("add-price")]
         public async Task<IActionResult> AddPriceToProduct(PriceModel price)
         {
+            if (!ModelState.IsValid) return CustomResponse();
+
             var resultado = await _mediatorHandler.SendCommand(
-                new AddPriceCommand(price.ProductId, price.SellerId, price.Value));
+                new AddPriceCommand(price.ProductId, price.Barcode, price.SellerId, price.Value));
 
             return CustomResponse(resultado);
         }

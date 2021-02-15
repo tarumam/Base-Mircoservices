@@ -43,15 +43,19 @@ namespace BaseProject.Catalog.Infra.Data.Repository
         {
             var result = await _context.Products.Include(p =>
                 p.Prices.Where(pr => pr.Active == true))
+                .OrderBy(a=>a.Name)
+                .Skip(pageSize * (pageIndex - 1))
                 .Take(pageSize)
-                .Skip(pageIndex - 1)
                 .ToListAsync();
             return result;
         }
 
         public async Task<Product> GetByBarcode(string barcode)
         {
-            return await _context.Products.Where(a => a.Barcode == barcode).FirstOrDefaultAsync();
+            var product = await _context.Products
+                .Where(a => a.Barcode == barcode)
+                .FirstOrDefaultAsync();
+            return product;
         }
 
         public async Task<Product> GetById(Guid id)
@@ -61,7 +65,9 @@ namespace BaseProject.Catalog.Infra.Data.Repository
 
         public async Task<Product> GetByName(string name)
         {
-            return await _context.Products.Where(a => a.Name.ToUpperInvariant().Contains(name.ToUpperInvariant())).FirstOrDefaultAsync();
+            return await _context.Products
+                .Where(a => a.Name.ToUpperInvariant().Contains(name.ToUpperInvariant()))
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Price> GetCurrentPriceForSeller(Guid productId, Guid sellerId)
@@ -77,7 +83,8 @@ namespace BaseProject.Catalog.Infra.Data.Repository
 
         public async Task<List<Price>> GetPrices(Guid productId)
         {
-            var prices = await _context.Prices.Where(a => a.ProductId == productId && a.Active == true).ToListAsync();
+            var prices = await _context.Prices
+                .Where(a => a.ProductId == productId && a.Active == true).ToListAsync();
             return prices;
         }
 
@@ -99,6 +106,7 @@ namespace BaseProject.Catalog.Infra.Data.Repository
         {
             var barcodes = await _context.Products
                   .Where(a => a.SyncWithWeb == false)
+                  .OrderBy(a=>a.CreatedAt)
                   .ToListAsync();
 
             return barcodes;
@@ -119,12 +127,15 @@ namespace BaseProject.Catalog.Infra.Data.Repository
 
         public async Task<IEnumerable<Product>> GetByName(int pageSize, int pageIndex, string text)
         {
-            return await _context.Products
-                .Where(a => a.Name.ToUpper()
-                .Contains(text.ToUpper()))
+            var result = await _context.Products.Include(p =>
+                p.Prices.Where(pr => pr.Active == true))
+                .Where(a => a.Name.ToUpper().Contains(text.ToUpper()))
+                .OrderBy(a => a.Name)
+                .Skip(pageSize * (pageIndex - 1))
                 .Take(pageSize)
-                .Skip(pageIndex - 1)
                 .ToListAsync();
+
+            return result;
         }
     }
 }

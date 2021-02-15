@@ -47,10 +47,10 @@ namespace BaseProject.Catalog.API.Configuration
 
         public static void UseApiConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
+            if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
-            //}
+            }
 
             using (var contextScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {

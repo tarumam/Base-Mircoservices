@@ -23,7 +23,7 @@ namespace BaseProject.Seller.API.Configuration
         public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<SellerContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(GetConnectionString(configuration)));
 
             services.AddControllers();
 

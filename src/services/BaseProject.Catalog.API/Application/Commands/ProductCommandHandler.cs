@@ -58,16 +58,29 @@ namespace BaseProject.Catalog.API.Application.Commands
         {
             if (!request.IsValid()) return request.ValidationResult;
 
-            var product = await _productRep.GetProductWithPrices(request.ProductId);
-            if (product == null)
+            Product product = null;
+
+            if (request.ProductId != Guid.Empty && request.ProductId != null)
             {
-                AdicionarErro("O produto informado não foi encontrado.");
+                product = await _productRep.GetProductWithPrices((Guid)request.ProductId);
+            }
+            else if (!string.IsNullOrEmpty(request.Barcode))
+            {
+                product = await _productRep.GetByBarcode(request.Barcode);
+            }
+            else
+            {
+                AdicionarErro("A identificação do produto não foi informada.");
                 return ValidationResult;
             }
 
-            // Validar seller
+            if (product == null)
+            {
+                product = new Product(request.Barcode, "Buscando informações", null, true, null);
+                _productRep.Add(product);
+            }
 
-            var price = new Price(request.ProductId, request.SellerId, request.Value, request.Active);
+            var price = new Price(product.Id, request.SellerId, request.Value, request.Active);
 
             await _productRep.AddPriceToProduct(price);
 

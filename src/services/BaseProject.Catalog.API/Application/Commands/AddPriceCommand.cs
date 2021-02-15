@@ -6,9 +6,10 @@ namespace BaseProject.Catalog.API.Application.Commands
 {
     public class AddPriceCommand : Command
     {
-        public AddPriceCommand(Guid productId, Guid sellerId, decimal value)
+        public AddPriceCommand(Guid? productId, string barcode, Guid sellerId, decimal value)
         {
             Id = Guid.NewGuid();
+            Barcode = barcode;
             ProductId = productId;
             SellerId = sellerId;
             Value = value;
@@ -16,7 +17,8 @@ namespace BaseProject.Catalog.API.Application.Commands
         }
 
         public Guid Id { get; private set; }
-        public Guid ProductId { get; private set; }
+        public Guid? ProductId { get; private set; }
+        public string Barcode { get; private set; }
         public Guid SellerId { get; private set; }
         public decimal Value { get; private set; }
         public bool Active { get; private set; }
@@ -36,8 +38,12 @@ namespace BaseProject.Catalog.API.Application.Commands
                     .WithMessage("Id do preço inválido");
 
                 RuleFor(c => c.ProductId)
-                    .NotEmpty()
-                    .WithMessage("O id do produto não foi informado");
+                    .NotEmpty().When(a => string.IsNullOrEmpty(a.Barcode))
+                    .WithMessage("A identificação do produto não foi informada");
+
+                RuleFor(c => c.Barcode)
+                    .NotEmpty().When(a => a.ProductId == null || a.ProductId == Guid.Empty)
+                    .WithMessage("A identificação do produto não foi informada");
 
                 RuleFor(c => c.SellerId)
                     .NotEmpty()
